@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardSharp", "CardSharp\CardSharp.csproj", "{C9EFB265-141E-47DB-A966-2960410E7EA6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardSharpTest", "CardSharpTest\CardSharpTest.csproj", "{058860B9-9D81-4C2F-AA76-D7A108382607}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C9EFB265-141E-47DB-A966-2960410E7EA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9EFB265-141E-47DB-A966-2960410E7EA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9EFB265-141E-47DB-A966-2960410E7EA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9EFB265-141E-47DB-A966-2960410E7EA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{058860B9-9D81-4C2F-AA76-D7A108382607}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{058860B9-9D81-4C2F-AA76-D7A108382607}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{058860B9-9D81-4C2F-AA76-D7A108382607}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{058860B9-9D81-4C2F-AA76-D7A108382607}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
