@@ -18,10 +18,14 @@ public class CardTest
     {
         var aceOfSpades1 = new Card();
         var aceOfSpades2 = new Card();
+        var deuceOfHearts = new Card(Rank.Two, Suit.Hearts);
+        Card? nullCard = null;
 
         Assert.False(aceOfSpades1 == aceOfSpades2);
 
         Assert.True(aceOfSpades1.Equals(aceOfSpades2));
+        Assert.False(aceOfSpades1.Equals(deuceOfHearts));
+        Assert.False(aceOfSpades1.Equals(nullCard));
     }
 
     [Fact]

@@ -15,12 +15,7 @@ public class Card(Rank rank = Rank.Ace, Suit suit = Suit.Spades) : IComparable<C
         return Rank.CompareTo(other.Rank);
     }
 
-    public bool Equals(Card? other)
-    {
-        if (other is null)
-            return false;
-        return other.Rank == Rank && other.Suit == Suit;
-    }
+    public bool Equals(Card? other) => other is not null && other.Rank == Rank && other.Suit == Suit;
 
     public bool IsOf(Rank rank, Suit suit) => Rank == rank && Suit == suit;
     
@@ -35,5 +30,10 @@ public class Card(Rank rank = Rank.Ace, Suit suit = Suit.Spades) : IComparable<C
     public char ToUnicodeChar()
     {
         throw new NotImplementedException();
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as Card);
     }
 }
