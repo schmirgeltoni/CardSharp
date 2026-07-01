@@ -10,23 +10,23 @@ public static class TestUtils
     public static Deck DeckWithAllSpadeCards()
     {
         return new Deck(
-            new Card(Rank.Two),
-            new Card(Rank.Three),
-            new Card(Rank.Four),
-            new Card(Rank.Five),
-            new Card(Rank.Six),
-            new Card(Rank.Seven),
-            new Card(Rank.Eight),
-            new Card(Rank.Nine),
-            new Card(Rank.Ten),
-            new Card(Rank.Jack),
-            new Card(Rank.Queen),
-            new Card(Rank.King),
-            new Card()
+            new Card(Rank.Two, Suit.Spades),
+            new Card(Rank.Three, Suit.Spades),
+            new Card(Rank.Four, Suit.Spades),
+            new Card(Rank.Five, Suit.Spades),
+            new Card(Rank.Six, Suit.Spades),
+            new Card(Rank.Seven, Suit.Spades),
+            new Card(Rank.Eight, Suit.Spades),
+            new Card(Rank.Nine, Suit.Spades),
+            new Card(Rank.Ten, Suit.Spades),
+            new Card(Rank.Jack, Suit.Spades),
+            new Card(Rank.Queen, Suit.Spades),
+            new Card(Rank.King, Suit.Spades),
+            new Card(Rank.Ace, Suit.Spades)
         );
     }
 
-    public static void CheckAllValues<TEnum, TResult>(
+    public static void CheckAllValuesOfEnum<TEnum, TResult>(
         Func<TEnum, TResult> function,
         params TResult[] expectedValues)
         where TEnum : struct, Enum

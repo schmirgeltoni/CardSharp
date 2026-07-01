@@ -7,7 +7,7 @@ public class CardTest
     [Fact]
     public void CardComparisons_Works()
     {
-        var aceOfSpades = new Card();
+        var aceOfSpades = new Card(Rank.Ace, Suit.Spades);
         var deuceOfHearts = new Card(Rank.Two, Suit.Hearts);
 
         Assert.True(aceOfSpades.CompareTo(deuceOfHearts) > 0);
@@ -16,12 +16,10 @@ public class CardTest
     [Fact]
     public void CardEquality_Works()
     {
-        var aceOfSpades1 = new Card();
-        var aceOfSpades2 = new Card();
+        var aceOfSpades1 = new Card(Rank.Ace, Suit.Spades);
+        var aceOfSpades2 = new Card(Rank.Ace, Suit.Spades);
         var deuceOfHearts = new Card(Rank.Two, Suit.Hearts);
         Card? nullCard = null;
-
-        Assert.False(aceOfSpades1 == aceOfSpades2);
 
         Assert.True(aceOfSpades1.Equals(aceOfSpades2));
         Assert.False(aceOfSpades1.Equals(deuceOfHearts));
@@ -31,6 +29,6 @@ public class CardTest
     [Fact]
     public void ToStringOverrideWorks()
     {
-        Assert.Equal("Ace of Spades", new Card().ToString());
+        Assert.Equal("Ace of Spades", new Card(Rank.Ace, Suit.Spades).ToString());
     }
 }

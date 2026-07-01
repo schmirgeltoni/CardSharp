@@ -3,7 +3,7 @@
 /**
  *
  */
-public class Card(Rank rank = Rank.Ace, Suit suit = Suit.Spades) : IComparable<Card>, IEquatable<Card>
+public class Card(Rank rank, Suit suit) : IComparable<Card>, IEquatable<Card>
 {
     public Rank Rank = rank;
     public Suit Suit = suit;
@@ -15,10 +15,16 @@ public class Card(Rank rank = Rank.Ace, Suit suit = Suit.Spades) : IComparable<C
         return Rank.CompareTo(other.Rank);
     }
 
+    public Card(Suit suit, Rank rank) : this(rank, suit) { }
+
+    public static implicit operator Card((Rank rank, Suit suit) values) => new(values.rank, values.suit);
+
+    public static implicit operator Card((Suit suit, Rank rank) values) => new(values.rank, values.suit);
+
     public bool Equals(Card? other) => other is not null && other.Rank == Rank && other.Suit == Suit;
 
     public bool IsOf(Rank rank, Suit suit) => Rank == rank && Suit == suit;
-    
+
     public bool IsOf(Suit suit, Rank rank) => Rank == rank && Suit == suit;
 
     public bool IsOf(Rank rank) => Rank == rank;
@@ -36,4 +42,6 @@ public class Card(Rank rank = Rank.Ace, Suit suit = Suit.Spades) : IComparable<C
     {
         return Equals(obj as Card);
     }
+
+    public override int GetHashCode() => ToString().GetHashCode();
 }

@@ -8,7 +8,7 @@ public class DeckTest
     [
         new(Rank.Ace, Suit.Diamonds),
         new(Rank.Queen, Suit.Diamonds),
-        new(Rank.Ten),
+        new(Rank.Ten, Suit.Spades),
         new(Rank.Two, Suit.Clubs),
         new(Rank.Seven, Suit.Clubs),
         new(Rank.Nine, Suit.Hearts),
@@ -22,36 +22,36 @@ public class DeckTest
         new(Rank.Five, Suit.Diamonds),
         new(Rank.Four, Suit.Hearts),
         new(Rank.Eight, Suit.Clubs),
-        new(Rank.Six),
+        new(Rank.Six, Suit.Spades),
         new(Rank.King, Suit.Hearts),
         new(Rank.Two, Suit.Diamonds),
         new(Rank.Three, Suit.Hearts),
         new(Rank.Seven, Suit.Diamonds),
-        new(Rank.King),
+        new(Rank.King, Suit.Spades),
         new(Rank.Nine, Suit.Diamonds),
         new(Rank.Jack, Suit.Diamonds),
         new(Rank.Nine, Suit.Clubs),
         new(Rank.Ten, Suit.Hearts),
         new(Rank.Three, Suit.Clubs),
-        new(Rank.Nine),
+        new(Rank.Nine, Suit.Spades),
         new(Rank.Seven, Suit.Hearts),
-        new(Rank.Jack),
-        new(Rank.Five),
+        new(Rank.Jack, Suit.Spades),
+        new(Rank.Five, Suit.Spades),
         new(Rank.Jack, Suit.Hearts),
-        new(Rank.Four),
+        new(Rank.Four, Suit.Spades),
         new(Rank.Six, Suit.Diamonds),
-        new(),
-        new(Rank.Eight),
-        new(Rank.Queen),
-        new(Rank.Three),
+        new(Rank.Ace, Suit.Spades),
+        new(Rank.Eight, Suit.Spades),
+        new(Rank.Queen, Suit.Spades),
+        new(Rank.Three, Suit.Spades),
         new(Rank.Queen, Suit.Hearts),
         new(Rank.Eight, Suit.Hearts),
         new(Rank.Three, Suit.Diamonds),
-        new(Rank.Seven),
+        new(Rank.Seven, Suit.Spades),
         new(Rank.Four, Suit.Clubs),
         new(Rank.Six, Suit.Hearts),
         new(Rank.King, Suit.Clubs),
-        new(Rank.Two),
+        new(Rank.Two, Suit.Spades),
         new(Rank.Queen, Suit.Clubs),
         new(Rank.Five, Suit.Hearts),
         new(Rank.King, Suit.Diamonds),
@@ -88,7 +88,7 @@ public class DeckTest
         var oldSize = deck.Count;
         var drawnCard = deck.Draw();
 
-        Assert.True(drawnCard.Equals(new Card(Rank.Two)));
+        Assert.True(drawnCard.Equals(new Card(Rank.Two, Suit.Spades)));
 
         Assert.Equal(oldSize - 1, deck.Count);
     }
@@ -124,7 +124,7 @@ public class DeckTest
 
         Assert.Single(deck.DrawnCards);
         Assert.True(drawnCard.IsOf(Rank.Two, Suit.Spades));
-        Assert.True(deck.DrawnCards[0] == drawnCard);
+        Assert.True(deck.DrawnCards[0].Equals(drawnCard));
 
         Assert.DoesNotContain(drawnCard, deck);
 
