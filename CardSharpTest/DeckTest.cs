@@ -88,7 +88,7 @@ public class DeckTest
         var oldSize = deck.Count;
         var drawnCard = deck.Draw();
 
-        Assert.True(drawnCard.Equals(new Card(Rank.Two, Suit.Spades)));
+        Assert.Equal((Rank.Two, Suit.Spades), drawnCard);
 
         Assert.Equal(oldSize - 1, deck.Count);
     }
@@ -112,7 +112,7 @@ public class DeckTest
         var index = 0;
         foreach (var card in deck)
         {
-            Assert.True(card.Equals(ShuffledDeckWithSpecifiedSeed.ElementAt(index++)));
+            Assert.Equal(ShuffledDeckWithSpecifiedSeed.ElementAt(index++), card);
         }
     }
 
@@ -123,10 +123,10 @@ public class DeckTest
         var drawnCard = deck.Draw();
 
         Assert.Single(deck.DrawnCards);
-        Assert.True(drawnCard.IsOf(Rank.Two, Suit.Spades));
-        Assert.True(deck.DrawnCards[0].Equals(drawnCard));
+        Assert.Equal(drawnCard, (Rank.Two, Suit.Spades));
+        Assert.Equal(drawnCard, deck.DrawnCards[0]);
 
-        Assert.DoesNotContain(drawnCard, deck);
+        Assert.DoesNotContain(drawnCard, deck.Cards);
 
         deck.Shuffle();
 

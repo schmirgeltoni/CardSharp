@@ -5,13 +5,13 @@
  */
 public readonly struct Card : IComparable<Card>, IEquatable<Card>
 {
-    private const int Bitshift = 3;
+    private const int BitShiftOffset = 3;
     
     private readonly byte value = 0;
 
-    public Rank Rank => (Rank)(value >> Bitshift);
+    public Rank Rank => (Rank)(value >> BitShiftOffset);
 
-    public Suit Suit => (Suit)(value & 0b0000_0111);
+    public Suit Suit => (Suit)(value & 0b0111);
 
     public int CompareTo(Card other)
     {
@@ -20,8 +20,7 @@ public readonly struct Card : IComparable<Card>, IEquatable<Card>
 
     public Card(Rank rank, Suit suit)
     {
-        value += (byte)((int)rank << Bitshift);
-        value += (byte)(int)suit;
+        value = (byte)(((int)rank << BitShiftOffset) | (int)suit);
     }
 
     public Card(Suit suit, Rank rank) : this(rank, suit)
@@ -49,7 +48,7 @@ public readonly struct Card : IComparable<Card>, IEquatable<Card>
         throw new NotImplementedException();
     }
 
-    public override int GetHashCode() => ToString().GetHashCode();
+    public override int GetHashCode() => value;
 
     public static bool operator ==(Card left, Card right)
     {

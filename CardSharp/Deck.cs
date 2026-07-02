@@ -4,101 +4,75 @@ namespace CardSharp;
 
 public class Deck : IEnumerable<Card>
 {
-    private readonly List<Card> cards;
-    private readonly List<Card> drawnCards = [];
-    public int Count => cards.Count;
+    private readonly Card[] cards;
+    private int deckPointer;
+    public int Count => cards.Length - deckPointer;
 
-    public IReadOnlyList<Card> DrawnCards => drawnCards;
-    public IReadOnlyList<Card> Cards => cards;
+    public Card[] DrawnCards => cards[..deckPointer];
 
-    public Deck(int cardCount = 52)
+    public IReadOnlyList<Card> Cards => cards[deckPointer..];
+
+    public Deck(bool shuffled = false)
     {
-        cards = [];
-        switch (cardCount)
-        {
-            case 52:
-            {
-                cards = OrderedCards();
-                break;
-            }
-            case > 52:
-            {
-                Random rng = new Random();
-                cards = OrderedCards();
-                for (int i = cardCount; i > 52; i--)
-                {
-                    cards.Add(new Card((Rank)rng.Next(0, 13), (Suit)rng.Next(0, 4)));
-                }
-
-                break;
-            }
-            default:
-                throw new NotImplementedException();
-        }
+        cards = OrderedCards();
+        if (shuffled)
+            Shuffle();
     }
 
     public Deck(params Card[] cards)
     {
-        this.cards = cards.ToList();
+        this.cards = cards;
     }
 
     public Deck(List<Card> cards)
     {
-        this.cards = cards;
+        this.cards = cards.ToArray();
     }
 
     public Deck(params Suit[] excludedSuits)
     {
-        cards = OrderedCards();
-        cards.RemoveAll(card => excludedSuits.Contains(card.Suit));
+        throw new NotImplementedException();
     }
 
     public Deck(params Rank[] excludedRanks)
     {
-        cards = OrderedCards();
-        cards.RemoveAll(card => excludedRanks.Contains(card.Rank));
+        throw new NotImplementedException();
     }
+    public static implicit operator Deck(List<Card> cards) => new(cards);
+    public static implicit operator Deck(Card[] cards) => new(cards);
 
-    public Card Draw()
-    {
-        if (Count == 0)
-            throw new InvalidOperationException("Deck is empty.");
-        var drawnCard = cards[0];
-        drawnCards.Add(drawnCard);
-        cards.RemoveAt(0);
-        return drawnCard;
-    }
+    /**
+     * Draws the top most card of the deck
+     */
+    public Card Draw() => cards[deckPointer++];
 
     public bool TryDraw(out Card card)
     {
-        if (Count > 0)
+        deckPointer++;
+        if (deckPointer > cards.Length)
         {
-            card = Draw();
-            return true;
-        }
-        else
-        {
-            card = default!;
+            card = new Card();
             return false;
         }
+
+        card = cards[deckPointer];
+        return true;
     }
 
     public void Burn()
     {
-        if (Count == 0)
-            return;
-        drawnCards.Add(cards[0]);
-        cards.RemoveAt(0);
+        deckPointer++;
     }
 
-    private static List<Card> OrderedCards()
+    private static Card[] OrderedCards()
     {
-        List<Card> ret = [];
-        foreach (var suit in (Suit[])Enum.GetValues(typeof(Suit)))
+        var ret = new Card[52];
+        var index = 0;
+        foreach (Suit suit in Enum.GetValues(typeof(Suit)))
         {
-            foreach (var rank in (Rank[])Enum.GetValues(typeof(Rank)))
+            foreach (Rank rank in Enum.GetValues(typeof(Rank)))
             {
-                ret.Add(new Card(rank, suit));
+                ret[index++] = (rank, suit);
             }
         }
 
@@ -112,15 +86,15 @@ public class Deck : IEnumerable<Card>
     public void Shuffle(Random? rng = null)
     {
         rng ??= new Random();
-        cards.AddRange(drawnCards);
-        drawnCards.Clear();
-        int n = cards.Count;
+        int n = cards.Length;
         while (n > 1)
         {
             n--;
             int k = rng.Next(n + 1);
             (cards[k], cards[n]) = (cards[n], cards[k]);
         }
+
+        deckPointer = 0;
     }
 
     public static Deck StandardDeckWithoutFollowingCards(params Card[] excluded)
@@ -134,14 +108,10 @@ public class Deck : IEnumerable<Card>
         deck.Shuffle();
         return deck;
     }
+    
+    public Card this[int index] => Cards[index];
 
-    public IEnumerator<Card> GetEnumerator()
-    {
-        return cards.GetEnumerator();
-    }
+    public IEnumerator<Card> GetEnumerator() => ((IEnumerable<Card>)cards).GetEnumerator();
 
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
-    }
+    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }
