@@ -1,9 +1,21 @@
 using CardSharp;
+using Xunit.Abstractions;
 
 namespace CardSharpTest;
 
-public class CardTest
+public class CardTest(ITestOutputHelper c)
 {
+    string ToBitString(byte value) => Convert.ToString(value, 2).PadLeft(8, '0').Insert(4, " ");
+
+    [Fact]
+    public void GettersWork()
+    {
+        Card card = (Rank.Ace, Suit.Clubs);
+        Assert.Equal(Rank.Ace, card.Rank);
+        Assert.Equal(Suit.Clubs, card.Suit);
+        Assert.Equal("Ace of Clubs", card.ToString());
+    }
+
     [Fact]
     public void CardComparisons_Works()
     {

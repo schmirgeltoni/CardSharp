@@ -3,25 +3,36 @@
 /**
  *
  */
-public class Card(Rank rank, Suit suit) : IComparable<Card>, IEquatable<Card>
+public readonly struct Card : IComparable<Card>, IEquatable<Card>
 {
-    public Rank Rank = rank;
-    public Suit Suit = suit;
+    private const int Bitshift = 3;
+    
+    private readonly byte value = 0;
 
-    public int CompareTo(Card? other)
+    public Rank Rank => (Rank)(value >> Bitshift);
+
+    public Suit Suit => (Suit)(value & 0b0000_0111);
+
+    public int CompareTo(Card other)
     {
-        if (other is null)
-            return 1;
         return Rank.CompareTo(other.Rank);
     }
 
-    public Card(Suit suit, Rank rank) : this(rank, suit) { }
+    public Card(Rank rank, Suit suit)
+    {
+        value += (byte)((int)rank << Bitshift);
+        value += (byte)(int)suit;
+    }
+
+    public Card(Suit suit, Rank rank) : this(rank, suit)
+    {
+    }
 
     public static implicit operator Card((Rank rank, Suit suit) values) => new(values.rank, values.suit);
 
     public static implicit operator Card((Suit suit, Rank rank) values) => new(values.rank, values.suit);
 
-    public bool Equals(Card? other) => other is not null && other.Rank == Rank && other.Suit == Suit;
+    public bool Equals(Card other) => other.value == value;
 
     public bool IsOf(Rank rank, Suit suit) => Rank == rank && Suit == suit;
 
@@ -38,10 +49,39 @@ public class Card(Rank rank, Suit suit) : IComparable<Card>, IEquatable<Card>
         throw new NotImplementedException();
     }
 
-    public override bool Equals(object? obj)
+    public override int GetHashCode() => ToString().GetHashCode();
+
+    public static bool operator ==(Card left, Card right)
     {
-        return Equals(obj as Card);
+        return left.Equals(right);
     }
 
-    public override int GetHashCode() => ToString().GetHashCode();
+    public static bool operator !=(Card left, Card right)
+    {
+        return !(left == right);
+    }
+
+    public static bool operator <(Card left, Card right)
+    {
+        throw new NotImplementedException();
+    }
+
+    public static bool operator >(Card left, Card right)
+    {
+        throw new NotImplementedException();
+    }
+    
+    public static bool operator <=(Card left, Card right)
+    {
+        throw new NotImplementedException();
+    }
+    public static bool operator >=(Card left, Card right)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is Card card && Equals(card);
+    }
 }
