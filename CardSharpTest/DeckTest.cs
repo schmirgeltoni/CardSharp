@@ -86,9 +86,7 @@ public class DeckTest
     {
         var deck = new Deck();
         var oldSize = deck.Count;
-        var drawnCard = deck.Draw();
-
-        Assert.Equal((Rank.Two, Suit.Spades), drawnCard);
+        deck.Burn();
 
         Assert.Equal(oldSize - 1, deck.Count);
     }
@@ -150,5 +148,18 @@ public class DeckTest
         {
             Assert.Contains(card, set);
         }
+    }
+
+    [Fact]
+    public void IndexerWorks()
+    {
+        var deck = new Deck();
+        var card = deck[0];
+        Assert.Equal((Rank.Two, Suit.Spades), card);
+        deck.Burn();
+        card = deck[0];
+
+        Assert.Equal((Rank.Three, Suit.Spades), card);
+        Assert.NotEqual((Rank.Two, Suit.Spades), card);
     }
 }
