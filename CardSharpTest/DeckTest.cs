@@ -4,7 +4,7 @@ namespace CardSharpTest;
 
 public class DeckTest
 {
-    private static readonly List<Card> ShuffledDeckWithSpecifiedSeed =
+    private static readonly Card[] ShuffledDeckWithSpecifiedSeed =
     [
         new(Rank.Ace, Suit.Diamonds),
         new(Rank.Queen, Suit.Diamonds),
@@ -76,7 +76,7 @@ public class DeckTest
         {
             for (int j = 0; j < 13; j++)
             {
-                Assert.True(deck.ElementAt(i * 13 + j).Equals(new Card((Rank)j, (Suit)i)));
+                Assert.Equal(((Rank)j, (Suit)i), deck.ElementAt(i * 13 + j));
             }
         }
     }
@@ -102,6 +102,34 @@ public class DeckTest
     }
 
     [Fact]
+    public void TryDraw_OnFullDeck_ReturnsTrueAndACard()
+    {
+        var deck = new Deck();
+        if (deck.TryDraw(out var c))
+        {
+            Assert.NotNull(c);
+            Assert.Equal((Suit.Spades, Rank.Two), c);
+        }
+        else
+        {
+            Assert.Fail("This branch should never be reached");
+        }
+
+        Assert.Equal(TestUtils.StandardDeckSize - 1, deck.Count);
+    }
+
+    [Fact]
+    public void TryDraw_OnEmptyDeck_ReturnsFalseAndNull()
+    {
+        var oneCardDeck = new Deck((Rank.Ace, Suit.Diamonds));
+        oneCardDeck.Burn();
+
+        Assert.Equal(0, oneCardDeck.Count);
+        Assert.False(oneCardDeck.TryDraw(out var c1));
+        Assert.Null(c1);
+    }
+
+    [Fact]
     public void DeckShuffleRandomizesCards()
     {
         var predeterminedRandom = new Random(69420);
@@ -121,7 +149,7 @@ public class DeckTest
         var drawnCard = deck.Draw();
 
         Assert.Single(deck.DrawnCards);
-        Assert.Equal(drawnCard, (Rank.Two, Suit.Spades));
+        Assert.Equal((Rank.Two, Suit.Spades), drawnCard);
         Assert.Equal(drawnCard, deck.DrawnCards[0]);
 
         Assert.DoesNotContain(drawnCard, deck.Cards);
@@ -161,5 +189,26 @@ public class DeckTest
 
         Assert.Equal((Rank.Three, Suit.Spades), card);
         Assert.NotEqual((Rank.Two, Suit.Spades), card);
+    }
+
+    [Fact]
+    public void InclusionConstructorsWork()
+    {
+        var deckWithOnlySpades = new Deck(Suit.Spades);
+        Assert.Equal(TestUtils.NumberOfRanks, deckWithOnlySpades.Count);
+        Assert.All(deckWithOnlySpades, card => Assert.True(card.Suit == Suit.Spades));
+
+        var deckWithOnlyFaceCards = new Deck(Rank.King, Rank.Queen, Rank.Jack);
+        Assert.Equal(3 * TestUtils.NumberOfSuits, deckWithOnlyFaceCards.Count);
+        Assert.All(deckWithOnlyFaceCards, card => Assert.True(card.Rank is > Rank.Ten and < Rank.Ace));
+
+        List<Rank> evenRanks = [Rank.Two, Rank.Four, Rank.Six, Rank.Eight, Rank.Ten];
+        List<Suit> redSuits = [Suit.Hearts, Suit.Diamonds];
+
+        var deckWithOnlyEvenRedCards = new Deck(redSuits, evenRanks);
+        Assert.Equal(evenRanks.Count * redSuits.Count, deckWithOnlyEvenRedCards.Count);
+        Assert.All(deckWithOnlyEvenRedCards,
+            card => Assert.True((int)card.Rank % 2 == 0 &&
+                                card is { Rank: < Rank.Jack, Suit: Suit.Hearts or Suit.Diamonds }));
     }
 }

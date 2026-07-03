@@ -10,9 +10,9 @@ public class Deck : IEnumerable<Card>
 
     public Card[] DrawnCards => cards[..deckPointer];
 
-    public IReadOnlyList<Card> Cards => cards[deckPointer..];
+    public Card[] Cards => cards[deckPointer..];
 
-    private static readonly Card[] StandardDeckCards =
+    private static readonly Card[] CardsInOrder =
     [
         (Rank.Two, Suit.Spades),
         (Rank.Three, Suit.Spades),
@@ -73,7 +73,7 @@ public class Deck : IEnumerable<Card>
 
     public Deck(bool shuffled = false)
     {
-        cards = StandardDeckCards;
+        cards = CardsInOrder;
         if (shuffled)
             Shuffle();
     }
@@ -88,23 +88,34 @@ public class Deck : IEnumerable<Card>
         this.cards = cards.ToArray();
     }
 
-    public Deck(params Suit[] excludedSuits)
+    public Deck(params Suit[] includedSuits)
     {
-        cards = OrderedCards(excludedSuits);
+        cards = OrderedCards(includedSuits);
     }
 
-    public Deck(params Rank[] excludedRanks)
+    public Deck(IEnumerable<Suit> includedSuits)
     {
-        cards = OrderedCards(null, excludedRanks);
+        cards = OrderedCards(includedSuits);
     }
 
-    public Deck(IEnumerable<Suit> excludedSuits, IEnumerable<Rank> excludedRanks)
+    public Deck(params Rank[] includedRanks)
     {
-        cards = OrderedCards(excludedSuits, excludedRanks);
+        cards = OrderedCards(includedRanks: includedRanks);
     }
 
-    public Deck(IEnumerable<Rank> excludedRanks, IEnumerable<Suit> excludedSuits)
-        : this(excludedSuits, excludedRanks) { }
+    public Deck(IEnumerable<Rank> includedRanks)
+    {
+        cards = OrderedCards(includedRanks: includedRanks);
+    }
+
+    public Deck(IEnumerable<Suit> includedSuits,
+        IEnumerable<Rank> includedRanks)
+    {
+        cards = OrderedCards(includedSuits, includedRanks);
+    }
+
+    public Deck(IEnumerable<Rank> includedRanks, IEnumerable<Suit> includedSuits)
+        : this(includedSuits, includedRanks) { }
 
     public static implicit operator Deck(List<Card> cards) => new(cards.ToArray());
     public static implicit operator Deck(Span<Card> cards) => new(cards.ToArray());
@@ -112,41 +123,58 @@ public class Deck : IEnumerable<Card>
 
     /**
      * Draws the top most card of the deck.
+     * Does not check whether drawing is even possible.
      */
     public Card Draw() => cards[deckPointer++];
 
-    public bool TryDraw(out Card card)
+    /*
+     * Attempts to draw the top most card of the deck.
+     * Returns true and the card as an out parameter if possible, false and null if not.
+     */
+    public bool TryDraw(out Card? card)
     {
-        deckPointer++;
-        if (deckPointer > cards.Length)
+        if (deckPointer >= cards.Length)
         {
-            card = new Card();
+            card = null;
             return false;
         }
 
-        card = cards[deckPointer];
+        card = cards[deckPointer++];
         return true;
     }
-
+    
+    /**
+     * Burns the top most card of the deck.
+     * https://en.wikipedia.org/wiki/Burn_card
+     */
     public void Burn()
     {
         deckPointer++;
     }
 
-    private static Card[] OrderedCards(IEnumerable<Suit>? excludedSuits = null, IEnumerable<Rank>? excludedRanks = null)
+    public Card? Peek()
     {
-        // for efficiency
-        if (excludedSuits is not null && excludedRanks is not null)
-            return StandardDeckCards;
+        TryDraw(out var c);
+        return c;
+    }
 
-        return StandardDeckCards.Where(card =>
-            excludedSuits is null || !excludedSuits.Contains(card.Suit) || excludedRanks is null ||
-            !excludedRanks.Contains(card.Rank)).ToArray();
+    private static Card[] OrderedCards(
+        IEnumerable<Suit>? includedSuits = null,
+        IEnumerable<Rank>? includedRanks = null)
+    {
+        // no filters => full deck
+        if (includedSuits is null && includedRanks is null)
+            return CardsInOrder;
+
+        return CardsInOrder
+            .Where(card =>
+                (includedSuits is null || includedSuits.Contains(card.Suit)) &&
+                (includedRanks is null || includedRanks.Contains(card.Rank)))
+            .ToArray();
     }
 
     /**
-     * Puts every card that was already drawn
-     * and every remaining card back into the deck and shuffles them.
+     * Shuffles the deck and resets the drawn pile.
      */
     public void Shuffle(Random? rng = null)
     {
@@ -164,7 +192,7 @@ public class Deck : IEnumerable<Card>
 
     public static Deck DeckWithoutFollowingCards(params Card[] excluded)
     {
-        return new Deck(StandardDeckCards.Except(excluded));
+        return new Deck(CardsInOrder.Except(excluded));
     }
 
     public static Deck ShuffledDeck()
@@ -179,7 +207,7 @@ public class Deck : IEnumerable<Card>
      */
     public Card this[int index] => Cards[index];
 
-    public IEnumerator<Card> GetEnumerator() => ((IEnumerable<Card>)cards).GetEnumerator();
+    public IEnumerator<Card> GetEnumerator() => ((IEnumerable<Card>)Cards).GetEnumerator();
 
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 }

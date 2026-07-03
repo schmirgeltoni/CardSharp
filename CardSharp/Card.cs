@@ -3,10 +3,10 @@
 /**
  *
  */
-public readonly struct Card : IComparable<Card>, IEquatable<Card>
+public readonly struct Card : IComparable<Card>, IEquatable<Rank>, IEquatable<Suit>, IEquatable<Card>
 {
     private const int BitShiftOffset = 3;
-    
+
     private readonly byte value = 0;
 
     public Rank Rank => (Rank)(value >> BitShiftOffset);
@@ -15,7 +15,8 @@ public readonly struct Card : IComparable<Card>, IEquatable<Card>
 
     public int CompareTo(Card other)
     {
-        return Rank.CompareTo(other.Rank);
+        var rank = Rank.CompareTo(other.Rank);
+        return rank != 0 ? rank : Suit.CompareTo(other.Suit);
     }
 
     public Card(Rank rank, Suit suit)
@@ -43,9 +44,36 @@ public readonly struct Card : IComparable<Card>, IEquatable<Card>
 
     public override string ToString() => $"{Rank} of {Suit}";
 
-    public char ToUnicodeChar()
+    public string ToUnicode()
     {
-        throw new NotImplementedException();
+        var suitBase = Suit switch
+        {
+            Suit.Spades => 0x1F0A0,
+            Suit.Hearts => 0x1F0B0,
+            Suit.Diamonds => 0x1F0C0,
+            Suit.Clubs => 0x1F0D0,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+        var rankOffset = Rank switch
+        {
+            Rank.Ace => 0x1,
+            Rank.Two => 0x2,
+            Rank.Three => 0x3,
+            Rank.Four => 0x4,
+            Rank.Five => 0x5,
+            Rank.Six => 0x6,
+            Rank.Seven => 0x7,
+            Rank.Eight => 0x8,
+            Rank.Nine => 0x9,
+            Rank.Ten => 0xA,
+            Rank.Jack => 0xB,
+            Rank.Queen => 0xD,
+            Rank.King => 0xE,
+            _ => throw new ArgumentOutOfRangeException()
+        };
+
+        return char.ConvertFromUtf32(suitBase + rankOffset);
     }
 
     public override int GetHashCode() => value;
@@ -60,24 +88,14 @@ public readonly struct Card : IComparable<Card>, IEquatable<Card>
         return !(left == right);
     }
 
-    public static bool operator <(Card left, Card right)
-    {
-        throw new NotImplementedException();
-    }
+    public static bool operator <(Card left, Card right) => left.CompareTo(right) < 0;
+    public static bool operator >(Card left, Card right) => left.CompareTo(right) > 0;
+    public static bool operator <=(Card left, Card right) => left.CompareTo(right) <= 0;
+    public static bool operator >=(Card left, Card right) => left.CompareTo(right) >= 0;
 
-    public static bool operator >(Card left, Card right)
-    {
-        throw new NotImplementedException();
-    }
-    
-    public static bool operator <=(Card left, Card right)
-    {
-        throw new NotImplementedException();
-    }
-    public static bool operator >=(Card left, Card right)
-    {
-        throw new NotImplementedException();
-    }
+    public bool Equals(Rank other) => Rank == other;
+
+    public bool Equals(Suit other) => Suit == other;
 
     public override bool Equals(object? obj)
     {

@@ -6,6 +6,9 @@ public static class TestUtils
 {
     public static readonly int StandardDeckSize =
         Enum.GetNames(typeof(Suit)).Length * Enum.GetNames(typeof(Rank)).Length;
+    
+    public static readonly int NumberOfSuits = Enum.GetValues<Suit>().Length;
+    public static readonly int NumberOfRanks = Enum.GetValues<Rank>().Length;
 
     public static Deck DeckWithOnlySpadeCards()
     {
